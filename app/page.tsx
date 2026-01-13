@@ -43,11 +43,11 @@ export default function Home() {
 
         <h1 className="-mt-16 text-center font-semibold tracking-tight inline-block text-[clamp(2rem,5vw,3.5rem)]">
           The OS for{" "}
-          <SparklesText>
+
             <LineShadowText className="italic" shadowColor={shadowColor}>
               Modern
             </LineShadowText>
-          </SparklesText>{" "}
+            {" "}
           Nonprofits
         </h1>
       </div>
