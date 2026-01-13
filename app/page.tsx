@@ -70,7 +70,7 @@ export default function Home() {
         <form className="flex flex-col sm:flex-row gap-2">
           <input
             type="email"
-            placeholder="example@nonprofit.org"
+            placeholder="rishaan@nonprofit.org"
             className="flex-1 rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm outline-none placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
           />
           <button className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black">
