@@ -7,6 +7,8 @@ import { OrbitingCircles } from "@/components/ui/orbiting-circles"
 import { AuroraText } from "@/components/ui/aurora-text"
 import { SparklesText } from "@/components/ui/sparkles-text"
 import { DotPattern } from "@/components/ui/dot-pattern"
+import { NumberTicker } from "@/components/ui/number-ticker"
+
 import { cn } from "@/lib/utils"
 
 
@@ -50,7 +52,19 @@ export default function Home() {
             {" "}
           Nonprofits
         </h1>
+
+        <h2 className="mt-10 text-center font-normal tracking-tight inline-block text-[clamp(1rem,3vw,1.5rem)] max-w-xl">
+          Join the{" "}
+          <AuroraText className="font-bold tracking-tight">
+          <NumberTicker
+            value={500}
+            className="font-bold tracking-tight"
+          />
+          </AuroraText>
+          {" "}people waiting for launch
+        </h2>
       </div>
+
 
       <div className="w-full max-w-md z-10">
         <form className="flex flex-col sm:flex-row gap-2">
