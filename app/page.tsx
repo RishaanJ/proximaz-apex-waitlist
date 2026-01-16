@@ -1,8 +1,8 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
 import { LineShadowText } from "@/components/ui/line-shadow-text"
-import { SmoothCursor } from "@/components/ui/smooth-cursor"
 import { OrbitingCircles } from "@/components/ui/orbiting-circles"
 import { AuroraText } from "@/components/ui/aurora-text"
 import { SparklesText } from "@/components/ui/sparkles-text"
@@ -15,10 +15,61 @@ import { cn } from "@/lib/utils"
 export default function Home() {
   const theme = useTheme()
   const shadowColor = theme.resolvedTheme === "dark" ? "white" : "black"
+  const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [waitlistCount, setWaitlistCount] = useState(500)
+
+  // Fetch waitlist count on mount
+  useEffect(() => {
+    fetch("/api/waitlist")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.count !== undefined) {
+          setWaitlistCount(data.count)
+        }
+      })
+      .catch((err) => console.error("Failed to fetch waitlist count:", err))
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setMessage({ type: "error", text: data.error || "Something went wrong" })
+        return
+      }
+
+      setMessage({ type: "success", text: data.message || "Successfully joined the waitlist!" })
+      setEmail("")
+      // Update count after successful submission
+      const countResponse = await fetch("/api/waitlist")
+      const countData = await countResponse.json()
+      if (countData.count !== undefined) {
+        setWaitlistCount(countData.count)
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Network error. Please try again." })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-black px-4 space-y-8 overflow-hidden">
-      <SmoothCursor />
       <DotPattern
         className={cn(
           "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]"
@@ -57,26 +108,46 @@ export default function Home() {
           Join the{" "}
           <AuroraText className="font-bold tracking-tight">
           <NumberTicker
-            value={500}
+            value={waitlistCount + 10}
             className="font-bold tracking-tight"
           />
           </AuroraText>
-          {" "}people waiting for launch
+          {" "}businesses waiting for launch
         </h2>
       </div>
 
 
       <div className="w-full max-w-md z-10">
-        <form className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="rishaan@nonprofit.org"
-            className="flex-1 rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm outline-none placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+            required
+            disabled={isLoading}
+            className="flex-1 rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm outline-none placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
           />
-          <button className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black">
-            Join
+          <button 
+            type="submit"
+            disabled={isLoading}
+            className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+          >
+            {isLoading ? "Joining..." : "Join"}
           </button>
         </form>
+        {message && (
+          <div
+            className={cn(
+              "mt-3 text-sm text-center rounded-full px-4 py-2",
+              message.type === "success"
+                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+            )}
+          >
+            {message.text}
+          </div>
+        )}
       </div>
 
       <div className="fixed bottom-4 w-full text-center z-50 pointer-events-none">
