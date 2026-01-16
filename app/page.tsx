@@ -109,7 +109,7 @@ export default function Home() {
           <AuroraText className="font-bold tracking-tight">
             {waitlistCount !== null ? (
               <NumberTicker
-                value={waitlistCount + 15}
+                value={waitlistCount}
                 className="font-bold tracking-tight"
               />
             ) : (
