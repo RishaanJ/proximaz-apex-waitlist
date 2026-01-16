@@ -54,7 +54,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    console.log('DATABASE_URL:', process.env.DATABASE_URL)
     const count = await prisma.waitlistEntry.count()
     return NextResponse.json({ count }, { status: 200 })
   } catch (error) {
