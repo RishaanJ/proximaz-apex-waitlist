@@ -37,8 +37,9 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const firstMessage = error.flatten().formErrors[0] || 'Invalid input'
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: firstMessage },
         { status: 400 }
       )
     }
