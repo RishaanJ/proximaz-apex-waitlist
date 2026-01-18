@@ -20,9 +20,10 @@ export default function Home() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
-  const [waitlistCount, setWaitlistCount] = useState(500)
+  const [waitlistCount, setWaitlistCount] = useState<number | null>(null) // start as null
+  const [hasFetchedCount, setHasFetchedCount] = useState(false)
 
-  // Fetch waitlist count on mount
+
   useEffect(() => {
     fetch("/api/waitlist")
       .then((res) => res.json())
@@ -32,6 +33,7 @@ export default function Home() {
         }
       })
       .catch((err) => console.error("Failed to fetch waitlist count:", err))
+      .finally(() => setHasFetchedCount(true)) 
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,13 +111,10 @@ export default function Home() {
         <h2 className="mt-10 text-center font-normal tracking-tight inline-block text-[clamp(1rem,3vw,1.5rem)] max-w-xl">
           Join the{" "}
           <AuroraText className="font-bold tracking-tight">
-            {waitlistCount !== null ? (
-              <NumberTicker
-                value={waitlistCount}
-                className="font-bold tracking-tight"
-              />
+            {hasFetchedCount && waitlistCount !== null ? (
+              <NumberTicker value={waitlistCount} className="font-bold tracking-tight" />
             ) : (
-              <span>...</span>
+              <span>...</span> // placeholder while loading
             )}
           </AuroraText>
           {" "}businesses waiting for launch
