@@ -112,7 +112,7 @@ export default function Home() {
           Join the{" "}
           <AuroraText className="font-bold tracking-tight">
             {hasFetchedCount && waitlistCount !== null ? (
-              <NumberTicker value={waitlistCount} className="font-bold tracking-tight" />
+              <NumberTicker value={waitlistCount + 15} className="font-bold tracking-tight" />
             ) : (
               <span>...</span> // placeholder while loading
             )}
